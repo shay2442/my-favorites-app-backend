@@ -1,10 +1,8 @@
 
    
 class ApplicationController < ActionController::API
-    include ActionController::Cookies
+    # include ActionController::Cookies
     before_action :authorized
-      rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
-      rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   
     def encode_token(payload)
       JWT.encode(payload, ENV['JWT_SECRET'])
@@ -42,14 +40,4 @@ class ApplicationController < ActionController::API
       render json: { message: 'Please log in' }, status: :unauthorized unless logged_in?
     end
 
-    private
-
-  def record_invalid(invalid)
-    render json: {error: invalid.record.errors.full_messages}, status: :unprocessable_entity
-  end
-
-  def record_not_found(error)
-    render json: {error: error.msg}, status: :not_found
-  end
-  
   end 
