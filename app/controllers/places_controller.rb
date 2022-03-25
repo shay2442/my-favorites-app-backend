@@ -3,7 +3,7 @@ class PlacesController < ApplicationController
 
   # GET /places
   def index
-    @places = Place.all
+    @places = current_user.places
 
     render json: @places
   end
@@ -26,6 +26,9 @@ class PlacesController < ApplicationController
 
   # PATCH/PUT /places/1
   def update
+    @place = current_user.places.find(params[:id])
+    #make secure that this is the current_users place maybe byebug
+    
     if @place.update(place_params)
       render json: @place
     else
@@ -35,7 +38,12 @@ class PlacesController < ApplicationController
 
   # DELETE /places/1
   def destroy
-    @place.destroy
+    @place = current_user.places.find(params[:id]).destroy
+    
+    if @place.destroy
+    else 
+      render json: @place.errors.full_messages
+    end
   end
 
   private
