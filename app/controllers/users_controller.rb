@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  rescue_from ActiveRecord::RecordInvalid, with: :record_invalid
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
   skip_before_action :authorized, only: [:index, :create ] 
   before_action :set_user, only: [:show, :update, :destroy ]
 
@@ -26,7 +28,7 @@ class UsersController < ApplicationController
       @token = encode_token({ user_id: @user.id })
       render json: {user: @user, token: @token}, status: :created 
     else
-      render json: {status: "error", code: 400, message: @user.errors.full_messages.join(", ")}, status: :unprocessable_entity
+      render json: @user.errors, status: :unprocessable_entity
     end
   end
 
@@ -54,4 +56,13 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:username, :password)
     end
+
+    def record_invalid(invalid)
+      render json: {errors: invalid.record.errors.full_messages}, status: :unprocessable_entity 
+  end
+
+  def record_not_found(error)
+      render json: {error: error.msg}, status: :unprocessable_entity
+  end
+
 end
