@@ -13,6 +13,8 @@ class PlacesController < ApplicationController
     render json: @place
   end
 
+  
+
   # POST /places
   def create
     @place = current_user.places.build(place_params)
@@ -32,6 +34,7 @@ class PlacesController < ApplicationController
     if @place.update(place_params)
       render json: @place
     else
+    
       render json: @place.errors, status: :unprocessable_entity
     end
   end

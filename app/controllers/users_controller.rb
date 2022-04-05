@@ -22,19 +22,30 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
-    @user = User.new(user_params) 
+    @user = User.create!(user_params) 
    
-    if @user.save && @user.id
+    if @user.valid? && @user.id
       @token = encode_token({ user_id: @user.id })
       render json: {user: @user, token: @token}, status: :created 
     else
+    
       render json: @user.errors, status: :unprocessable_entity
     end
   end
 
+  # def create
+  #   user = User.create(user_params)
+  #    if user.valid?
+  #      session[:user_id] = user.id
+  #      render json: user, status: :created
+  #    else
+  #      render json: user.errors, status: :unprocessable_entity
+  #    end
+  #  end
+
   # PATCH/PUT /users/1
   def update
-    if @user.update(user_params)
+    if @user.update!(user_params)
       render json: @user
     else
       render json: @user.errors, status: :unprocessable_entity
@@ -54,7 +65,7 @@ class UsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def user_params
-      params.require(:user).permit(:username, :password)
+      params.require(:user).permit(:username, :password, :password_confirmation)
     end
 
     def record_invalid(invalid)

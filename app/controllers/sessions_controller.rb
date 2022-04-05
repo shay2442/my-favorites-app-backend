@@ -9,12 +9,23 @@ class SessionsController < ApplicationController
 
     
     def login
-        @user = User.find_by(username: params[:username])
+        @user = User.find_by_username(params[:username])
         if @user && @user.authenticate(params[:password])
             @token = encode_token({ user_id: @user.id})
             render json: { user: @user, token: @token }, status: :ok
         else
-            render json: { errors: ["Incorrect username or password"]}, status: unprocessible_entity
+            
+            render json: {error: 'Invalid username or password'}, status: :unauthorized
         end
     end
 end
+
+# f create
+#   user = User.find_by_username(params[:username])
+#   if user && user.authenticate(params[:password])
+#     session[:user_id] = user.id
+#     render json: user, status: :ok
+#   else
+#     render json: {error: 'invalid username or password'}, status: :unauthorized
+#   end
+# end
