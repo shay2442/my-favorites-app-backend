@@ -22,6 +22,7 @@ class UsersController < ApplicationController
 
   # POST /users
   def create
+
     @user = User.create!(user_params) 
    
     if @user.valid? && @user.id
